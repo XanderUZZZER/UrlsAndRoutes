@@ -43,6 +43,10 @@ namespace UrlsAndRoutes
                 //    template: "App/Do{action}",
                 //    defaults: new { controller = "Home" });
 
+                routes.MapRoute(
+                    name: "areas",
+                    template: "{area:exists}/{controller=Home}/{action=Index}");
+
                 routes.Routes.Add(new LegacyRoute(
                                         app.ApplicationServices,
                                         "/articles/Windows_3.1_Overview.html",
