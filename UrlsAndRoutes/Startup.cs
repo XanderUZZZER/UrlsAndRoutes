@@ -18,7 +18,11 @@ namespace UrlsAndRoutes
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<RouteOptions>(options =>
-                options.ConstraintMap.Add("weekday", typeof(WeekDayConstraint)));   
+                {
+                    options.ConstraintMap.Add("weekday", typeof(WeekDayConstraint));
+                    options.LowercaseUrls = true;
+                    options.AppendTrailingSlash = true;
+                });
             services.AddMvc();
         }
 
@@ -32,7 +36,26 @@ namespace UrlsAndRoutes
 
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
+            app.UseMvc(routes =>
+            {
+                //routes.MapRoute(
+                //    name: "NewRoute",
+                //    template: "App/Do{action}",
+                //    defaults: new { controller = "Home" });
+
+                routes.Routes.Add(new LegacyRoute(
+                                        app.ApplicationServices,
+                                        "/articles/Windows_3.1_Overview.html",
+                                        "/old/.NET_1.0_Class_Library"));
+
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "out",
+                    template: "outbound/{controller=Home}/{action=Index}");
+            });
             //app.UseMvc(routes =>
             //{
             //    routes.MapRoute(
@@ -40,27 +63,27 @@ namespace UrlsAndRoutes
             //        //template: "{controller=Home}/{action=Index}/{id:int?}/{*catchall}");
             //        //template: "{controller:regex(^H.*)=Home}/{action:regex(^Index$|^About$)=Index}/{id?}");
             //        template: "{controller=Home}/{action=Index}/{id:weekday?}");
-                //routes.MapRoute(
-                //    name: "ShopSchema2",
-                //    template: "Shop/OldAction",
-                //    defaults: new { controller = "Home", action = "Index" });
+            //routes.MapRoute(
+            //    name: "ShopSchema2",
+            //    template: "Shop/OldAction",
+            //    defaults: new { controller = "Home", action = "Index" });
 
-                //routes.MapRoute(
-                //    name: "ShopSchema",
-                //    template: "Shop/{action}",
-                //    defaults: new { controller = "Home" });
+            //routes.MapRoute(
+            //    name: "ShopSchema",
+            //    template: "Shop/{action}",
+            //    defaults: new { controller = "Home" });
 
-                //routes.MapRoute(
-                //    name:"", 
-                //    template:"X{controller}/{action}");
+            //routes.MapRoute(
+            //    name:"", 
+            //    template:"X{controller}/{action}");
 
-                //routes.MapRoute(
-                //    name: "default",
-                //    template: "{controller=Home}/{action=Index}");
+            //routes.MapRoute(
+            //    name: "default",
+            //    template: "{controller=Home}/{action=Index}");
 
-                //routes.MapRoute(
-                //    name: "",
-                //    template: "Public/{controller=Home}/{action=Index}");
+            //routes.MapRoute(
+            //    name: "",
+            //    template: "Public/{controller=Home}/{action=Index}");
             //});
         }
     }
